@@ -270,11 +270,52 @@ def islands_counter(area_map):
 island_test = [['W', 'L', 'W', 'W', 'L', 'W'],
                ['L', 'L', 'W', 'W', 'L', 'W'],
                ['W', 'L', 'W', 'W', 'W', 'W'],
-               ['W', 'W', 'W', 'L', 'L', 'W'],
                ['W', 'L', 'W', 'L', 'L', 'W'],
-               ['W', 'W', 'L', 'W', 'W', 'W']]
+               ['W', 'L', 'W', 'L', 'L', 'W'],
+               ['W', 'W', 'W', 'W', 'W', 'W']]
 
 print()
 print("Number of islands")
 print(islands_counter(island_test))
 
+def count_island_size(area_map, source, visited, num_rows, num_cols):
+    row, col = source
+    legal_row = 0 <= row < num_rows
+    legal_col = 0 <= col < num_cols
+    if not (legal_row and legal_col):
+        return 0
+
+    if area_map[row][col] == 'W':
+        return 0
+
+    if source in visited:
+        return 0
+
+    island_size = 1
+
+    visited.add(source)
+    island_size += count_island_size(area_map, (row, col + 1), visited, num_rows, num_cols)
+    island_size += count_island_size(area_map, (row, col - 1), visited, num_rows, num_cols)
+    island_size += count_island_size(area_map, (row + 1, col), visited, num_rows, num_cols)
+    island_size += count_island_size(area_map, (row - 1, col), visited, num_rows, num_cols)
+
+    return island_size
+
+def min_island(area_map):
+    visited = set()
+    num_rows = len(area_map)
+    num_cols = len(area_map[0])
+    min_island_size = float('inf')
+    for i in range(num_rows):
+        for j in range(num_cols):
+            cur_island_size = count_island_size(area_map, (i, j), visited,
+                                                num_rows, num_cols)
+            if 0 < cur_island_size < min_island_size:
+                min_island_size = cur_island_size
+
+
+    return min_island_size
+
+print()
+print("Min Island Size")
+print(min_island(island_test))
